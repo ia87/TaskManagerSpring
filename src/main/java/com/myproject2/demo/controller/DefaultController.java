@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-//import javax.validation.Valid;
+import javax.validation.Valid;
+
 
 @Controller
 public class DefaultController {
@@ -59,15 +60,15 @@ public class DefaultController {
         return new ModelAndView("form", "personForm", personForm);
     }
 
-//    @PostMapping("/form")
-//    public String checkPersonInfo(@Valid PersonForm personForm, BindingResult bindingResult) {
-//
-//        if (bindingResult.hasErrors()) {
-//            return "form";
-//        }
-//
-//        return "redirect:/results";
-//    }
+    @PostMapping("/form")
+    public String checkPersonInfo(@Valid PersonForm personForm, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "form";
+        }
+
+        return "redirect:/results";
+    }
 
     @GetMapping("/results")
     public String  showResults() {

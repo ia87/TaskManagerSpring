@@ -1,11 +1,14 @@
 package com.myproject2.demo.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
@@ -13,6 +16,10 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 // Switch off the Spring Boot security configuration
 //@EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
 
     @Autowired
     private AccessDeniedHandler accessDeniedHandler;
@@ -46,9 +53,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 
         auth.inMemoryAuthentication()
-                .withUser("user").password("password").roles("USER")
+                .withUser("user").password(passwordEncoder().encode("password")).roles("USER")
                 .and()
-                .withUser("admin").password("password").roles("ADMIN");
+                .withUser("admin").password(passwordEncoder().encode("password")).roles("ADMIN");
     }
 
     @Override
