@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <title>Todo list </title>
+    <div th:replace="fragments/header :: header-css"/>
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+    <div>
+        <a type="button" class="btn btn-primary btn-md" href="/add-todo">Add Todo</a>
+    </div>
+    <br>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3>List of TODO's</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th width="40%">Description</th>
+                    <th width="40%">Target Date</th>
+                    <th width="20%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="todo : ${todos}">
+                        <td th:text="${todo.description}">Description</td>
+                        <td th:text="${#temporals.format(todo.getTargetDate(),'dd-MMMM-yyyy')}">Some date</td>
+                        <td><a type="button" class="btn btn-success"
+                               th:href="@{'/update-todo?id=' + ${todo.id}}">Update</a>
+                            <a type="button" class="btn btn-warning"
+                               th:href="@{'/delete-todo?id=' + ${todo.id}}">Delete</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="fragments/footer :: footer"/>
+
+</body>
+</html>

@@ -31,6 +31,7 @@
                     <li class="active"><a th:href="@{/}">Home</a></li>
                     <li class="active"><a th:href="@{/form}">Form</a></li>
                     <li class="active"><a th:href="@{/users}">ALL USERS</a></li>
+                    <li class="active"><a th:href="@{/list-todos}">List TODOs</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right" sec:authorize="!isAuthenticated()">
                     <li><a th:href="@{/register}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
