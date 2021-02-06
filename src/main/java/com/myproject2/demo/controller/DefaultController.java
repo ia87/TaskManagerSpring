@@ -66,28 +66,28 @@ public class DefaultController {
         return "/login";
     }
 
-    @GetMapping("/register")
-    public ModelAndView reg() {
-        return  new ModelAndView("register", "user", new UserRegistrationDTO());
-//        return "/register";
-    }
-
-    @PostMapping("/register")
-    public ModelAndView registerUserAccount(
-            @ModelAttribute("user") @Valid UserRegistrationDTO user,
-            HttpServletRequest request, Errors errors, ModelMap model
-    ) {
-        try {
-            User registered = userService.saveNewUser(user);
-        } catch (UserAlreadyExistException uaeEx) {
-            model.addAttribute("message", "An account for that username/email already exists.");
-            return new ModelAndView("register", model);
-        }
-        ModelAndView modelAndView = new ModelAndView("login");
-        modelAndView.addObject("message", "New user created. Plz log in.");
-//        return new ModelAndView("login","message", "New user created. Plz log in.");
-        return modelAndView;
-    }
+//    @GetMapping("/register")
+//    public ModelAndView reg() {
+//        return  new ModelAndView("register", "user", new UserRegistrationDTO());
+////        return "/register";
+//    }
+//
+//    @PostMapping("/register")
+//    public ModelAndView registerUserAccount(
+//            @ModelAttribute("user") @Valid UserRegistrationDTO user,
+//            HttpServletRequest request, Errors errors, ModelMap model
+//    ) {
+//        try {
+//            User registered = userService.saveNewUser(user);
+//        } catch (UserAlreadyExistException uaeEx) {
+//            model.addAttribute("message", "An account for that username/email already exists.");
+//            return new ModelAndView("register", model);
+//        }
+//        ModelAndView modelAndView = new ModelAndView("login");
+//        modelAndView.addObject("message", "New user created. Plz log in.");
+////        return new ModelAndView("login","message", "New user created. Plz log in.");
+//        return modelAndView;
+//    }
 
     @GetMapping("/403")
     public String error403() {

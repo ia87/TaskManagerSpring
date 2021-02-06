@@ -88,13 +88,14 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 //        System.out.println(username);
 //        System.out.println(userRepository.findByEmail(username).isPresent());
-        User user = userRepository.findByEmail(username).get();
-        if (user == null)
-            throw new UsernameNotFoundException(username);
+        User user = userRepository.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException(username));
+//        if (user == null)
+//            throw new UsernameNotFoundException(username);
 //            log.error("{}", e.getMessage());
 //            throw e;
         System.out.println(user.getEmail());
         System.out.println(user.getPassword());
+        System.out.println(passwordEncoder.encode(user.getPassword()));
         System.out.println(user.getFirstName());
         System.out.println(user.getLastName());
         user.getRoles().stream().forEach(System.out::println);
@@ -104,7 +105,8 @@ public class UserService implements UserDetailsService {
         user.getRoles().forEach(x->authorities.add(new SimpleGrantedAuthority(x.getAuthority())));
 
         return new org.springframework.security.core.userdetails
-                .User(user.getEmail(), passwordEncoder.encode(user.getPassword()), authorities);
+//                .User(user.getEmail(), passwordEncoder.encode(user.getPassword()), authorities);
+                .User(user.getEmail(), user.getPassword(), authorities);
 //        return user;
     }
 }

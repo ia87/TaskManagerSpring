@@ -25,11 +25,11 @@ public class User implements UserDetails {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(min=2, message = "At least 5 characters")
+    @Size(min=1, message = "At least 1 characters")
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Size(min=2, message = "At least 5 characters")
+    @Size(min=1, message = "At least 1 characters")
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
