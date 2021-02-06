@@ -14,7 +14,8 @@
             <td>Name:</td>
             <td>
                 <input type="text" th:field="*{name}" name="username" id="username" class="form-control input-lg"
-                       placeholder="UserName (2-30 symbols)" required="true" autofocus="true"/></td>
+                       placeholder="UserName (2-30 symbols)" required="true" autofocus="true"/>
+            </td>
             <td th:if="${#fields.hasErrors('name')}" >Name Error</td>
 <!--            <td th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</td>-->
         </tr>

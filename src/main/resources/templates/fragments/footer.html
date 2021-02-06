@@ -1,11 +1,4 @@
-about.html
-admin.html
-form.html
-home.html
-login.html
-register.html
-results.html
-user.html<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
 </head>
@@ -19,7 +12,12 @@ user.html<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymele
         &copy; 2021 myproject.com
             <span sec:authorize="isAuthenticated()">
                 | Logged user: <span sec:authentication="name"></span> |
-                Roles: <span sec:authentication="principal.authorities"></span> |
+                Roles:
+<!--                <span sec:authentication="principal.authorities"></span> |-->
+                <span th:each="authority : ${#authentication.getAuthorities()}"
+                   th:if="${authority.getAuthority().startsWith('ROLE_')}"
+                   th:text="${authority.getAuthority().replaceFirst('ROLE_', '')}">
+                </span>
                 <a th:href="@{/logout}">Sign Out</a>
             </span>
 

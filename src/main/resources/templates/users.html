@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All users</title>
+    <div th:replace="fragments/header :: header-css"/>
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"/>
+
+<span th:text="${name11}"/>
+
+<h1>Product list</h1>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+    </tr>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.getId()}">Onions</td>
+        <td th:text="${user.getFirstName()}">2.41</td>
+        <td th:text="${user.getLastName()}">2.41</td>
+        <td th:text="${user.getEmail()}">2.41</td>
+    </tr>
+</table>
+
+
+<hr>
+<p>
+    <a href="/" th:href="@{/}">Return home</a>
+</p>
+<hr>
+<p>
+    <a href="/users/registration" th:href="@{/users/registration}">Register new user !</a>
+</p>
+<hr>
+<a href="/"> Home page </a>><br>
+</body>
+</html>
