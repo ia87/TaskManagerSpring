@@ -1,7 +1,10 @@
 package com.myproject2.demo.controller;
 
+import java.awt.print.Pageable;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.validation.Valid;
 
@@ -9,6 +12,8 @@ import com.myproject2.demo.entity.Todo;
 import com.myproject2.demo.service.ITodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -35,10 +40,38 @@ public class TodoController {
     }
 
     @RequestMapping(value = "/list-todos", method = RequestMethod.GET)
-    public String showTodos(ModelMap model) {
+    public String showTodos(
+            ModelMap model,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size) {
+        int currentPage = page.orElse(1);
+        int pageSize = size.orElse(4);
+
+        System.out.println(currentPage);
+        System.out.println(pageSize);
+
         String name = getLoggedInUserName(model);
-        model.addAttribute("todos", todoService.getTodosByUser(name));
-        // model.put("todos", service.retrieveTodos(name));
+
+//        Page<Todo> todoPage = todoService.getAllTodo(PageRequest.of(currentPage - 1, pageSize));
+        Page<Todo> todoPage = todoService.getTodosPageByUser(name, PageRequest.of(currentPage - 1, pageSize));
+        List<Todo> todos = Collections.emptyList();
+        if(!todoPage.isLast()) todos=todoPage.getContent();
+
+
+        model.addAttribute("todos", todoPage.getContent());
+        model.addAttribute("todoPage", todoPage);
+        model.addAttribute("currentPage", currentPage);
+
+//        int totalPages = todoPage.getTotalPages();
+//        if (totalPages > 0) {
+//            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+//                    .boxed()
+//                    .collect(Collectors.toList());
+//            model.addAttribute("pageNumbers", pageNumbers);
+//        }
+
+
+//        model.addAttribute("todos", todoService.getTodosByUser(name));
         return "list-todos";
     }
 

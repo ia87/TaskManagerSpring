@@ -1,13 +1,14 @@
 package com.myproject2.demo.service;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import com.myproject2.demo.entity.Todo;
 import com.myproject2.demo.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 
@@ -18,8 +19,13 @@ public class TodoService implements ITodoService {
     private TodoRepository todoRepository;
 
     @Override
-    public List < Todo > getTodosByUser(String user) {
-        return todoRepository.findByUserName(user);
+    public Page<Todo> getTodosPageByUser(String user, Pageable pageable) {
+        return todoRepository.findByUserName(user, pageable);
+    }
+
+    @Override
+    public Page<Todo> getAllTodo(Pageable pageable) {
+        return todoRepository.findAll(pageable);
     }
 
     @Override
@@ -40,13 +46,12 @@ public class TodoService implements ITodoService {
     @Override
     public void deleteTodo(long id) {
         Optional < Todo > todo = todoRepository.findById(id);
-        if (todo.isPresent()) {
-            todoRepository.delete(todo.get());
-        }
+        todo.ifPresent(value -> todoRepository.delete(value));
     }
 
     @Override
     public void saveTodo(Todo todo) {
         todoRepository.save(todo);
     }
+
 }
