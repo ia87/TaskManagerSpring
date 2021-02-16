@@ -9,34 +9,59 @@
 
 <div th:replace="fragments/header :: header"/>
 
-<span th:text="${name11}"/>
+<div class="container">
+    <br>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 th:align="center" th:text="#{title.users}">List of Users</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th style="width:5%" th:text="#{label.user.id}">ID</th>
+                    <th style="width:20%" th:text="#{label.user.firstName}">FIRST NAME</th>
+                    <th style="width:20%" th:text="#{label.user.lastName}">LAST NAME</th>
+                    <th style="width:20%" th:text="#{label.user.email}">EMAIL</th>
+                    <th style="width:35%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"/>
+                    <td th:text="${user.firstName}"/>
+                    <td th:text="${user.lastName}"/>
+                    <td th:text="${user.email}"/>
+                    <td>
+                        <a type="button" class="btn btn-primary"
+                            th:href="@{'/users/{id}/todo-list' (id = ${user.id})}"th:text="#{buttons.tasks}">Tasks</a>
+                        <a type="button" class="btn btn-success"
+                            th:href="@{'/users/{id}/edit' (id = ${user.id})}" th:text="#{buttons.updateUser}">Update user</a>
+                        <a type="button" class="btn btn-warning"
+                            th:href="@{'/users/{id}/delete' (id = ${user.id})}"th:text="#{buttons.deleteUser}">Delete user</a>
+                     </td>
+                </tr>
+            </tbody>
+        </table>
 
-<h1>Product list</h1>
-<table>
-    <tr>
-        <th>ID</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email</th>
-    </tr>
-    <tr th:each="user : ${users}">
-        <td th:text="${user.getId()}">Onions</td>
-        <td th:text="${user.getFirstName()}">2.41</td>
-        <td th:text="${user.getLastName()}">2.41</td>
-        <td th:text="${user.getEmail()}">2.41</td>
-    </tr>
-</table>
+            <div class="pagination-div" th:align="center">
+            <span th:if="${page.hasPrevious()}">
+                <a th:href="@{/users(page=${(page.number)},size=${page.size})}" th:text="#{buttons.previous}">Previous</a>
+            </span>
+                <th:block th:each="i: ${#numbers.sequence(0, (page.totalPages) - 1)}">
+                    <span th:if="${page.number == i}" class="selected">[[${i}+1]]</span>
+                    <span th:unless="${page.number == i}">
+                     <a th:href="@{/users(page=${i+1},size=${page.size})}">[[${i}+1]]</a>
+                </span>
+                </th:block>
+                <span th:if="${page.hasNext()}">
+                <a th:href="@{/users(page=${page.number+2},size=${page.size})}" th:text="#{buttons.next}">Next</a>
+            </span>
+            </div>
 
+    </div>
+</div>
+</div>
 
-<hr>
-<p>
-    <a href="/" th:href="@{/}">Return home</a>
-</p>
-<hr>
-<p>
-    <a href="/users/registration" th:href="@{/users/registration}">Register new user !</a>
-</p>
-<hr>
-<a href="/"> Home page </a>><br>
 </body>
 </html>

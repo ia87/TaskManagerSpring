@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title>Todo list </title>
+    <div th:replace="fragments/header :: header-css"/>
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+    <div>
+        <a type="button" class="btn btn-primary btn-md" href="/add-todo"  th:text="#{buttons.addTodo}">Add Todo</a>
+    </div>
+    <br>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 th:align="center" th:text="#{title.myTasks}">My TODO list</h3>
+<!--            <h3 th:text="${#temporals.format(${datetime},'dd/MMM/yyyy HH:mm')}">Some date</h3>-->
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th style="width:40%" th:text="#{todo.description}">Description</th>
+                    <th style="width:10%" th:text="#{todo.targetDate}">Target Date</th>
+                    <th style="width:10%"  th:text="#{todo.started}">Started</th>
+                    <th style="width:10%" th:text="#{todo.finished}">Finished</th>
+                    <th style="width:30%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="todo : ${todos}">
+                        <td th:text="${todo.description}">Description</td>
+                        <td th:text="${#temporals.format(todo.getTargetDate(), __#{format.date}__,  __${#locale}__)}">Some date</td>
+                        <td th:text="${#temporals.format(todo.getStarted(),__#{format.datetime}__, __${#locale}__)}">Some date</td>
+                        <td th:text="${#temporals.format(todo.getFinished(), __#{format.datetime}__, __${#locale}__)}">Some date</td>
+                        <td><a type="button" class="btn btn-primary"
+                               th:if="${todo.getFinished()==null}"
+                               th:href="@{'/update-todo?id=' + ${todo.id}}" th:text="#{buttons.edit}">Edit</a>
+                            <a type="button" class="btn btn-danger"
+                               sec:authorize="hasRole('ROLE_ADMIN')"
+                               th:href="@{'/delete-todo?id=' + ${todo.id}}" th:text="#{buttons.delete}">Delete</a>
+                            <a type="button" class="btn btn-success"
+                               th:if="${todo.getStarted()==null}"
+                               th:href="@{'/start-todo?id=' + ${todo.id}}" th:text="#{buttons.start}">Start</a>
+                            <a type="button" class="btn btn-warning"
+                               th:if="${todo.getStarted()!=null && todo.getFinished()==null}"
+                               th:href="@{'/finish-todo?id=' + ${todo.id}}" th:text="#{buttons.finish}">Finish</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="pagination-div" th:align="center">
+            <span th:if="${todoPage.hasPrevious()}">
+                <a th:href="@{/list-todos(page=${(todoPage.number)},size=${todoPage.size})}" th:text="#{buttons.previous}">Previous</a>
+            </span>
+                    <th:block th:each="i: ${#numbers.sequence(0, (todoPage.totalPages) - 1)}">
+                        <span th:if="${todoPage.number == i}" class="selected">[[${i}+1]]</span>
+                        <span th:unless="${todoPage.number == i}">
+                     <a th:href="@{/list-todos(page=${i+1},size=${todoPage.size})}">[[${i}+1]]</a>
+                </span>
+                    </th:block>
+                    <span th:if="${todoPage.hasNext()}">
+                <a th:href="@{/list-todos(page=${todoPage.number+2},size=${todoPage.size})}" th:text="#{buttons.next}">Next</a>
+            </span>
+        </div>
+
+    </div>
+
+</div>
+
+<div th:replace="fragments/footer :: footer"/>
+
+</body>
+</html>

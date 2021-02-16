@@ -9,3 +9,18 @@ h2{
 footer{
     margin-top:60px;
 }
+
+table {
+	table-layout: fixed;
+	width:100%
+}
+
+td, th {
+	text-align: center;
+	align-content: center;
+	align-items: center;
+	vertical-align: center;
+}
+td {
+	word-wrap:break-word;
+}

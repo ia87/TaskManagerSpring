@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <title>Todo</title>
+    <div th:replace="fragments/header :: header-css"/>
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"/>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 ">
+            <div class="panel panel-primary">
+                <div class="panel-heading" th:text="#{title.addTodo}">Add TODO</div>
+                <div class="panel-body">
+                    <form action="#" th:action="@{/add-todo}" th:object="${todo}" method="post">
+                        <hidden path="id" />
+                        <fieldset class="form-group">
+                            <label for="description" th:text="#{todo.description}">Description</label>
+                            <input id="description" type="text" th:field="*{description}" class="form-control"
+                                        required="required" />
+<!--                            <errors path="description" cssClass="text-warning" />-->
+                            <p class="alert alert-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Incorrect description</p>
+                        </fieldset>
+
+                        <fieldset class="form-group">
+                            <label for="targetDate" th:text="#{todo.targetDate}">Target Date</label>
+                            <input id="targetDate" type="date" th:field="*{targetDate}" class="form-control"
+                                        required="required" />
+                            <p class="alert alert-danger" th:if="${#fields.hasErrors('targetDate')}" th:errors="*{targetDate}">Incorrect data</p>
+<!--                            <errors path="targetDate" cssClass="text-warning" />-->
+                        </fieldset>
+
+                        <button type="submit" class="btn btn-success" th:value="#{buttons.save}">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"/>
+
+</body>
+</html>
