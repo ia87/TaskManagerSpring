@@ -4,6 +4,7 @@ import com.my.taskmanagerspring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,7 +19,15 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 // http://docs.spring.io/spring-boot/docs/current/reference/html/howto-security.html
 // Switch off the Spring Boot security configuration
 @EnableWebSecurity
-public class    SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+    private final UserService userService;
+    private final AccessDeniedHandler accessDeniedHandler;
+
+    public SpringSecurityConfig(AccessDeniedHandler accessDeniedHandler, @Lazy UserService userService) {
+        this.accessDeniedHandler = accessDeniedHandler;
+        this.userService = userService;
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -29,12 +38,6 @@ public class    SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private AccessDeniedHandler accessDeniedHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -66,7 +69,7 @@ public class    SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .and()
 //                .withUser("admin").password(passwordEncoder().encode("password")).roles("ADMIN");
 
-                auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
 
     }
 
@@ -86,4 +89,6 @@ public class    SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js");
     }
+
+
 }

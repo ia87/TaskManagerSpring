@@ -7,7 +7,7 @@ import javax.validation.Valid;
 
 import com.my.taskmanagerspring.entity.Todo;
 import com.my.taskmanagerspring.entity.User;
-import com.my.taskmanagerspring.service.ITodoService;
+import com.my.taskmanagerspring.service.TodoService;
 import com.my.taskmanagerspring.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +26,13 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class TodoController {
 
-    @Autowired
-    private ITodoService todoService;
-    @Autowired
-    private UserService userService;
+    private final TodoService todoService;
+    private final UserService userService;
+
+    public TodoController(UserService userService, TodoService todoService) {
+        this.userService = userService;
+        this.todoService = todoService;
+    }
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {

@@ -2,7 +2,7 @@ package com.my.taskmanagerspring.controller;
 
 import com.my.taskmanagerspring.entity.Todo;
 import com.my.taskmanagerspring.entity.User;
-import com.my.taskmanagerspring.service.ITodoService;
+import com.my.taskmanagerspring.service.TodoService;
 import com.my.taskmanagerspring.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +23,12 @@ import java.util.Optional;
 @Slf4j
 @Controller
 public class UsersController {
-    @Autowired
     private final UserService userService;
-    @Autowired
-    private ITodoService todoService;
+    private final TodoService todoService;
 
-    @Autowired
-    public UsersController(UserService userService) {
+    public UsersController(UserService userService, TodoService todoService) {
         this.userService = userService;
+        this.todoService = todoService;
     }
 
     @RequestMapping("/users")
@@ -46,7 +44,7 @@ public class UsersController {
             model.addAttribute("users", usersPage.getContent());
             model.addAttribute("page", usersPage);
             model.addAttribute("currentPage", currentPage);
-        return "/users";
+        return "users";
     }
 
     @RequestMapping(value = "/users/{id}/edit", method = RequestMethod.GET)
@@ -55,7 +53,7 @@ public class UsersController {
                         Model model){
         User user = userService.getUserById(id);
         model.addAttribute("user", user);
-        return "/user";
+        return "user";
     }
 
 

@@ -1,6 +1,5 @@
 package com.my.taskmanagerspring.controller;
 
-import com.my.taskmanagerspring.service.ITodoService;
 import com.my.taskmanagerspring.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +12,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 
-@SpringBootTest
+//@SpringBootTest
 @AutoConfigureMockMvc
 class DefaultControllerTest {
     @MockBean
     UserService userService;
-    @MockBean
-    private ITodoService todoService;
 
     @Autowired
     private MockMvc mockMvc;

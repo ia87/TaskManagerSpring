@@ -1,9 +1,7 @@
 package com.my.taskmanagerspring.controller;
 
-import com.my.taskmanagerspring.service.ITodoService;
-import com.my.taskmanagerspring.service.UserService;
+import com.my.taskmanagerspring.service.TodoService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -16,10 +14,12 @@ import java.util.Objects;
 @Slf4j
 @Controller
 public class DefaultController {
-    @Autowired
-    UserService userService;
-    @Autowired
-    private ITodoService todoService;
+
+    private final TodoService todoService;
+
+    public DefaultController(TodoService todoService) {
+        this.todoService = todoService;
+    }
 
     @GetMapping("/")
     public String home1( ModelMap model,
@@ -35,37 +35,37 @@ public class DefaultController {
         }
         model.addAttribute("datetime", LocalDateTime.now());
         model.addAttribute("unfinishedTasks", unfinishedTasksCount);
-        return "/home";
+        return "home";
     }
 
     @GetMapping("/home")
     public String home() {
-        return "/home";
+        return "home";
     }
 
     @GetMapping("/admin")
     public String admin() {
-        return "/admin";
+        return "admin";
     }
 
     @GetMapping("/user")
     public String user() {
-        return "/user";
+        return "user";
     }
 
     @GetMapping("/about")
     public String about() {
-        return "/about";
+        return "about";
     }
 
     @GetMapping("/login")
     public String login() {
-        return "/login";
+        return "login";
     }
 
     @GetMapping("/403")
     public String error403() {
-        return "/error/403";
+        return "error/403";
     }
 
 }
