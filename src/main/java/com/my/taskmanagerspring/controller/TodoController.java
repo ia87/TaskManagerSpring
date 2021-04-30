@@ -10,7 +10,6 @@ import com.my.taskmanagerspring.entity.User;
 import com.my.taskmanagerspring.service.TodoService;
 import com.my.taskmanagerspring.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,10 +41,10 @@ public class TodoController {
 
     @RequestMapping(value = "/list-todos", method = RequestMethod.GET)
     public String showTodos(
-                        ModelMap model,
-                        @RequestParam("page") Optional<Integer> page,
-                        @RequestParam("size") Optional<Integer> size,
-                        @AuthenticationPrincipal UserDetails userDetails){
+            ModelMap model,
+            @RequestParam("page") Optional<Integer> page,
+            @RequestParam("size") Optional<Integer> size,
+            @AuthenticationPrincipal UserDetails userDetails) {
 
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(4);
@@ -71,15 +70,11 @@ public class TodoController {
                           @Valid Todo todo,
                           BindingResult result,
                           @AuthenticationPrincipal UserDetails userDetails) {
-
         if (result.hasErrors()) {
             result.getAllErrors().forEach(System.out::println);
             return "todos/todo";
         }
-
-//        User userByEmail = userService.getUserByEmail(userDetails.getUsername());
-//        todo.setUser(userByEmail);
-        if (userDetails instanceof User) todo.setUser((User)userDetails);
+        if (userDetails instanceof User) todo.setUser((User) userDetails);
         System.out.println(todo.getUser());
         todoService.saveTodo(todo);
         return "redirect:/list-todos";
@@ -93,22 +88,22 @@ public class TodoController {
 
     @RequestMapping(value = "/update-todo", method = RequestMethod.GET)
     public String showUpdateTodoPage(
-                        @RequestParam long id,
-                        ModelMap model) {
-        Todo todo = todoService.getTodoById(id).orElseThrow(()->new RuntimeException("No such TODO"));
+            @RequestParam long id,
+            ModelMap model) {
+        Todo todo = todoService.getTodoById(id).orElseThrow(() -> new RuntimeException("No such TODO"));
         model.addAttribute("todo", todo);
         return "todos/update-todo";
     }
 
     @RequestMapping(value = "/update-todo", method = RequestMethod.POST)
     public String updateTodo(ModelMap model,
-                         @Valid Todo todo,
-                         BindingResult result,
-                         @AuthenticationPrincipal UserDetails userDetails) {
-        User userByEmail=null;
+                             @Valid Todo todo,
+                             BindingResult result,
+                             @AuthenticationPrincipal UserDetails userDetails) {
+        User userByEmail;
 
         if (result.hasErrors()) {
-            result.getAllErrors().forEach(e->log.error("{}",e));
+            result.getAllErrors().forEach(e -> log.error("{}", e));
             return "todos/todo";
         }
         try {
@@ -124,9 +119,9 @@ public class TodoController {
 
     @RequestMapping(value = "/start-todo", method = RequestMethod.GET)
     public String startTodo(
-                        @RequestParam long id,
-                        ModelMap model) {
-        Todo todo = todoService.getTodoById(id).orElseThrow(()->new RuntimeException("No such TODO"));
+            @RequestParam long id,
+            ModelMap model) {
+        Todo todo = todoService.getTodoById(id).orElseThrow(() -> new RuntimeException("No such TODO"));
         todo.setStarted(LocalDateTime.now());
         todoService.saveTodo(todo);
 
@@ -137,7 +132,7 @@ public class TodoController {
     public String finishTodo(
             @RequestParam long id,
             ModelMap model) {
-        Todo todo = todoService.getTodoById(id).orElseThrow(()->new RuntimeException("No such TODO"));
+        Todo todo = todoService.getTodoById(id).orElseThrow(() -> new RuntimeException("No such TODO"));
         todo.setFinished(LocalDateTime.now());
         todoService.saveTodo(todo);
         return "redirect:/list-todos";

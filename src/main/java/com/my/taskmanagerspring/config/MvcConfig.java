@@ -8,12 +8,16 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.util.Locale;
 
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
+
+    public static final String LANG = "lang";
+    public static final String CLASSPATH_LANG_RES = "classpath:lang/res";
+    public static final String UTF_8 = "UTF-8";
+    public static final int CACHE_SECONDS = 3600;
 
     @Bean
     public LocaleResolver localeResolver() {
@@ -26,7 +30,7 @@ public class MvcConfig implements WebMvcConfigurer {
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-        lci.setParamName("lang");
+        lci.setParamName(LANG);
         return lci;
     }
 
@@ -38,9 +42,9 @@ public class MvcConfig implements WebMvcConfigurer {
     @Bean
     public ReloadableResourceBundleMessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:lang/res");
-        messageSource.setCacheSeconds(3600);
-        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setBasename(CLASSPATH_LANG_RES);
+        messageSource.setCacheSeconds(CACHE_SECONDS);
+        messageSource.setDefaultEncoding(UTF_8);
         return messageSource;
     }
 }

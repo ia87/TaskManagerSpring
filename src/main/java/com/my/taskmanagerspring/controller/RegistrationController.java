@@ -31,7 +31,7 @@ public class RegistrationController {
 
     @PostMapping("/register")
     public String addUser(@ModelAttribute("user") @Valid UserRegistrationDTO user, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors())  return "register";
+        if (bindingResult.hasErrors()) return "register";
         try {
             userService.saveNewUser(user);
         } catch (UserAlreadyExistException e) {

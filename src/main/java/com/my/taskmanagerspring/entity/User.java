@@ -16,19 +16,19 @@ import java.util.Set;
 @Builder
 @ToString
 @Entity
-@Table( name="user",
-        uniqueConstraints={@UniqueConstraint(columnNames={"email"})})
-public class    User implements UserDetails {
+@Table(name = "user",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
+public class User implements UserDetails {
     @Id
-    @GeneratedValue (strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(min=1, message = "At least 1 characters")
+    @Size(min = 1, message = "At least 1 characters")
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Size(min=1, message = "At least 1 characters")
+    @Size(min = 1, message = "At least 1 characters")
     @Column(name = "last_name", nullable = false)
     private String lastName;
 

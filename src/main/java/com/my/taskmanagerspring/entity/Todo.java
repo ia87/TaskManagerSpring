@@ -1,4 +1,5 @@
 package com.my.taskmanagerspring.entity;
+
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,7 +13,6 @@ import javax.validation.constraints.Size;
 
 /**
  * @author Ramesh Fadatare
- *
  */
 
 @ToString
@@ -25,11 +25,11 @@ import javax.validation.constraints.Size;
 public class Todo {
 
     @Id
-    @GeneratedValue    (strategy=GenerationType.SEQUENCE,
-            generator="todo_seq")
-    @SequenceGenerator (name="todos_seq",
-            sequenceName="SEQ_TODO",
-            allocationSize=5)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator = "todo_seq")
+    @SequenceGenerator(name = "todos_seq",
+            sequenceName = "SEQ_TODO",
+            allocationSize = 5)
     private long id;
 
     @Size(min = 5, message = "Enter at least 5 Characters...")
@@ -38,20 +38,20 @@ public class Todo {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate targetDate;
 
-//    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    //    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime started;
 
-//    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    //    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime finished;
 
     public Todo() {
         super();
     }
 
-    @ManyToOne(fetch=FetchType.LAZY
+    @ManyToOne(fetch = FetchType.LAZY
 //            ,cascade=CascadeType.ALL
     )
-    @JoinColumn (name="user_id")
+    @JoinColumn(name = "user_id")
     @ToString.Exclude
     private User user;
 

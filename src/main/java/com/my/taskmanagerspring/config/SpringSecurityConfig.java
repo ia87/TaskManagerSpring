@@ -16,8 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
-// http://docs.spring.io/spring-boot/docs/current/reference/html/howto-security.html
-// Switch off the Spring Boot security configuration
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
@@ -57,7 +55,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
-
     }
 
 
@@ -70,7 +67,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .withUser("admin").password(passwordEncoder().encode("password")).roles("ADMIN");
 
         auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
-
     }
 
     @Override
@@ -89,6 +85,4 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js");
     }
-
-
 }

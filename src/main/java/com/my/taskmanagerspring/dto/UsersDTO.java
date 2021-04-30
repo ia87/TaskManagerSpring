@@ -12,5 +12,5 @@ import java.util.List;
 @Builder
 @ToString
 public class UsersDTO {
-private List<User> users;
+    private List<User> users;
 }

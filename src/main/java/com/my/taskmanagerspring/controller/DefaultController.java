@@ -22,14 +22,14 @@ public class DefaultController {
     }
 
     @GetMapping("/")
-    public String home1( ModelMap model,
-                         @AuthenticationPrincipal UserDetails userDetails){
+    public String home1(ModelMap model,
+                        @AuthenticationPrincipal UserDetails userDetails) {
 //        SecurityContextHolder.getContext().getAuthentication() != null &&
 //                SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
         long unfinishedTasksCount = 0;
 
-        if(userDetails!=null &&
-                Objects.requireNonNull(userDetails).getUsername()!=null) {
+        if (userDetails != null &&
+                Objects.requireNonNull(userDetails).getUsername() != null) {
             String userName = userDetails.getUsername();
             unfinishedTasksCount = todoService.countUnfinishedTasksByEmail(userName);
         }

@@ -40,7 +40,7 @@ public class TodoServiceDefault implements TodoService {
     }
 
     @Override
-    public Optional < Todo > getTodoById(long id) {
+    public Optional<Todo> getTodoById(long id) {
         return todoRepository.findById(id);
     }
 

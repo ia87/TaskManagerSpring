@@ -9,7 +9,6 @@ import com.my.taskmanagerspring.entity.User;
 import com.my.taskmanagerspring.exceptions.UserAlreadyExistException;
 import com.my.taskmanagerspring.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,21 +40,20 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(()-> new UsernameNotFoundException("User id = "+id));
+        return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User id = " + id));
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("User email = "+email));
+        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User email = " + email));
     }
 
 
-
-    public User saveNewUser (UserRegistrationDTO userRegistrationDTO) throws UserAlreadyExistException {
+    public User saveNewUser(UserRegistrationDTO userRegistrationDTO) throws UserAlreadyExistException {
         if (emailExist(userRegistrationDTO.getEmail())) {
             log.info("{}", "Почтовый адрес уже существует");
             throw new UserAlreadyExistException(
                     "There is an account with that email address: "
-                            +  userRegistrationDTO.getEmail());
+                            + userRegistrationDTO.getEmail());
         }
 
         User user = User.builder()
@@ -86,10 +84,10 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("Username = " + username));
+        User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Username = " + username));
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        user.getRoles().forEach(x->authorities.add(new SimpleGrantedAuthority(x.getAuthority())));
+        user.getRoles().forEach(x -> authorities.add(new SimpleGrantedAuthority(x.getAuthority())));
         log.info("{}", "Loaded user: " + user);
 
 //        return new org.springframework.security.core.userdetails
@@ -99,11 +97,11 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public Optional<User> findByUserLogin (UserDTO userDTO){
+    public Optional<User> findByUserLogin(UserDTO userDTO) {
         return userRepository.findByEmail(userDTO.getEmail());
     }
 
-    public Optional<User> findByUserLogin (UserRegistrationDTO userDTO){
+    public Optional<User> findByUserLogin(UserRegistrationDTO userDTO) {
         return userRepository.findByEmail(userDTO.getEmail());
     }
 }
