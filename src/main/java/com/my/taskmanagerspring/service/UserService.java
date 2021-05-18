@@ -8,9 +8,11 @@ import com.my.taskmanagerspring.entity.Role;
 import com.my.taskmanagerspring.entity.RoleType;
 import com.my.taskmanagerspring.entity.User;
 import com.my.taskmanagerspring.exceptions.UserAlreadyExistException;
+import com.my.taskmanagerspring.interceptor.RequestData;
 import com.my.taskmanagerspring.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.jni.Time;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -30,6 +33,8 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserDAO userDAO;
+    @Autowired
+    private RequestData requestData;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserDAO userDAO) {
         this.userRepository = userRepository;
@@ -42,11 +47,27 @@ public class UserService implements UserDetailsService {
     }
 
     public Page<User> getAllUsers(Pageable pageable) {
+        System.out.println("----------------------");
+        System.out.println(requestData);
+        System.out.println(requestData.getHeaderNames());
+        System.out.println(requestData.hashCode());
+        System.out.println("----------------------");
         userDAO.getAllUsers(pageable);
         return userRepository.findAll(pageable);
     }
 
     public Page<User> getAllUsers(Pageable pageable, String repository) {
+        System.out.println("----------------------");
+        System.out.println(requestData);
+        System.out.println(requestData.getHeaderNames());
+        System.out.println(requestData.hashCode());
+        while(requestData.getHeaderNames().hasMoreElements()){
+            if (requestData.getHeaderNames().nextElement().equals("jdbc")){
+                System.out.println("Contains JDBC HEADER");
+            }
+        }
+        System.out.println("----------------------");
+
         Long start, end;
         if (repository.equals("jdbc")) {
             log.info("Getting data from JDBC repo");
