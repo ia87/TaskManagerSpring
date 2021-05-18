@@ -9,11 +9,11 @@ import com.my.taskmanagerspring.entity.RoleType;
 import com.my.taskmanagerspring.entity.User;
 import com.my.taskmanagerspring.exceptions.UserAlreadyExistException;
 import com.my.taskmanagerspring.interceptor.RequestData;
-import com.my.taskmanagerspring.repository.UserRepository;
+import com.my.taskmanagerspring.repository.UserGeneralRepository;
 import com.my.taskmanagerspring.util.RepositorySwitcher;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,31 +22,32 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
 @Service
 public class UserService implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final UserGeneralRepository JPARepo;
+    private final UserGeneralRepository JDBCRepo;
+
     private final PasswordEncoder passwordEncoder;
-    private final UserDAO userDAO;
     @Autowired
     private RequestData requestData;
     @Autowired
     private RepositorySwitcher repositorySwitcher;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserDAO userDAO) {
-        this.userRepository = userRepository;
+    public UserService(@Qualifier("JPARepo") UserGeneralRepository JPARepo,
+                       @Qualifier("JDBCRepo") UserGeneralRepository JDBCRepo,
+                       PasswordEncoder passwordEncoder) {
+        this.JPARepo = JPARepo;
+        this.JDBCRepo = JDBCRepo;
         this.passwordEncoder = passwordEncoder;
-        this.userDAO = userDAO;
     }
 
     public UsersDTO getAllUsers() {
-        return new UsersDTO(userRepository.findAll());
+        return new UsersDTO(JPARepo.findAll());
     }
 
     public Page<User> getAllUsers(Pageable pageable) {
@@ -55,8 +56,7 @@ public class UserService implements UserDetailsService {
         System.out.println(requestData.getHeaderNames());
         System.out.println(requestData.hashCode());
         System.out.println("----------------------");
-        userDAO.getAllUsers(pageable);
-        return userRepository.findAll(pageable);
+        return JPARepo.findAll(pageable);
     }
 
     public Page<User> getAllUsers(Pageable pageable, String repository) {
@@ -71,14 +71,14 @@ public class UserService implements UserDetailsService {
         if (repository.equals("jdbc")) {
             log.info("Getting data from JDBC repo");
             start = Instant.now().toEpochMilli();
-            Page<User> allUsers = userDAO.getAllUsers(pageable);
+            Page<User> allUsers = JDBCRepo.findAll(pageable);
             end = Instant.now().toEpochMilli();
             log.info("Request took: " + (end - start));
             return allUsers;
         } else {
             log.info("Getting data from JPA repo");
             start = Instant.now().toEpochMilli();
-            Page<User> all = userRepository.findAll(pageable);
+            Page<User> all = JPARepo.findAll(pageable);
             end = Instant.now().toEpochMilli();
             log.info("Request took: " + (end - start));
             return all;
@@ -86,11 +86,11 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User id = " + id));
+        return JPARepo.findById(id).orElseThrow(() -> new UsernameNotFoundException("User id = " + id));
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User email = " + email));
+        return JPARepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User email = " + email));
     }
 
 
@@ -110,27 +110,27 @@ public class UserService implements UserDetailsService {
                 .password(passwordEncoder.encode(userRegistrationDTO.getPassword()))
                 .build();
 
-        return userRepository.save(user);
+        return JPARepo.save(user);
 
     }
 
     public boolean deleteUser(Long userId) {
-        if (userRepository.findById(userId).isPresent()) {
-            userRepository.deleteById(userId);
+        if (JPARepo.findById(userId).isPresent()) {
+            JPARepo.deleteById(userId);
             return true;
         }
         return false;
     }
 
     private boolean emailExist(String email) {
-        Optional<User> byEmail = userRepository.findByEmail(email);
+        Optional<User> byEmail = JPARepo.findByEmail(email);
         return byEmail.isPresent();
     }
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Username = " + username));
+        User user = JPARepo.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Username = " + username));
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         user.getRoles().forEach(x -> authorities.add(new SimpleGrantedAuthority(x.getAuthority())));
@@ -144,10 +144,10 @@ public class UserService implements UserDetailsService {
 
 
     public Optional<User> findByUserLogin(UserDTO userDTO) {
-        return userRepository.findByEmail(userDTO.getEmail());
+        return JPARepo.findByEmail(userDTO.getEmail());
     }
 
     public Optional<User> findByUserLogin(UserRegistrationDTO userDTO) {
-        return userRepository.findByEmail(userDTO.getEmail());
+        return JPARepo.findByEmail(userDTO.getEmail());
     }
 }

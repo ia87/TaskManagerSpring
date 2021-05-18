@@ -11,18 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-//    @Query("SELECT u FROM User u WHERE u.email = ?1")
-
-    @EntityGraph(attributePaths = {"roles"})
+public interface UserGeneralRepository {
     Optional<User> findByEmail(String email);
-
-    @EntityGraph(attributePaths = {"roles"})
     Optional<User> findById(Long id);
-
-    @EntityGraph(attributePaths = {"roles"})
     List<User> findAll();
-
-    @EntityGraph(attributePaths = {"roles"})
     Page<User> findAll(Pageable pageable);
+    User save(User user);
+    void deleteById(Long id);
 }
