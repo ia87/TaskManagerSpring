@@ -10,6 +10,7 @@ import com.my.taskmanagerspring.entity.User;
 import com.my.taskmanagerspring.exceptions.UserAlreadyExistException;
 import com.my.taskmanagerspring.interceptor.RequestData;
 import com.my.taskmanagerspring.repository.UserRepository;
+import com.my.taskmanagerspring.util.RepositorySwitcher;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class UserService implements UserDetailsService {
     private final UserDAO userDAO;
     @Autowired
     private RequestData requestData;
+    @Autowired
+    private RepositorySwitcher repositorySwitcher;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserDAO userDAO) {
         this.userRepository = userRepository;
@@ -61,11 +64,7 @@ public class UserService implements UserDetailsService {
         System.out.println(requestData);
         System.out.println(requestData.getHeaderNames());
         System.out.println(requestData.hashCode());
-        while(requestData.getHeaderNames().hasMoreElements()){
-            if (requestData.getHeaderNames().nextElement().equals("jdbc")){
-                System.out.println("Contains JDBC HEADER");
-            }
-        }
+        System.out.println(repositorySwitcher.getRepository());
         System.out.println("----------------------");
 
         Long start, end;
