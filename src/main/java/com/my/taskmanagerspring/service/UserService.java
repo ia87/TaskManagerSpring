@@ -1,5 +1,6 @@
 package com.my.taskmanagerspring.service;
 
+import com.my.taskmanagerspring.dao.UserDAO;
 import com.my.taskmanagerspring.dto.UserDTO;
 import com.my.taskmanagerspring.dto.UserRegistrationDTO;
 import com.my.taskmanagerspring.dto.UsersDTO;
@@ -9,6 +10,7 @@ import com.my.taskmanagerspring.entity.User;
 import com.my.taskmanagerspring.exceptions.UserAlreadyExistException;
 import com.my.taskmanagerspring.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.Time;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,6 +20,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -25,10 +29,12 @@ import java.util.*;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserDAO userDAO;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserDAO userDAO) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userDAO = userDAO;
     }
 
     public UsersDTO getAllUsers() {
@@ -36,7 +42,27 @@ public class UserService implements UserDetailsService {
     }
 
     public Page<User> getAllUsers(Pageable pageable) {
+        userDAO.getAllUsers(pageable);
         return userRepository.findAll(pageable);
+    }
+
+    public Page<User> getAllUsers(Pageable pageable, String repository) {
+        Long start, end;
+        if (repository.equals("jdbc")) {
+            log.info("Getting data from JDBC repo");
+            start = Instant.now().toEpochMilli();
+            Page<User> allUsers = userDAO.getAllUsers(pageable);
+            end = Instant.now().toEpochMilli();
+            log.info("Request took: " + (end - start));
+            return allUsers;
+        } else {
+            log.info("Getting data from JPA repo");
+            start = Instant.now().toEpochMilli();
+            Page<User> all = userRepository.findAll(pageable);
+            end = Instant.now().toEpochMilli();
+            log.info("Request took: " + (end - start));
+            return all;
+        }
     }
 
     public User getUserById(Long id) {

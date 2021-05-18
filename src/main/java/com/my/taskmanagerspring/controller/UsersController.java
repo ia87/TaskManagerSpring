@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Locale;
 import java.util.Optional;
 
 @Slf4j
@@ -32,12 +33,13 @@ public class UsersController {
     @RequestMapping("/users")
     public String index(Model model,
                         @RequestParam("page") Optional<Integer> page,
-                        @RequestParam("size") Optional<Integer> size) {
+                        @RequestParam("size") Optional<Integer> size,
+                        @RequestHeader(value = "jdbc", defaultValue = "") String repository) {
 
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(5);
         Page<User> usersPage =
-                userService.getAllUsers(PageRequest.of(currentPage - 1, pageSize));
+                userService.getAllUsers(PageRequest.of(currentPage - 1, pageSize), repository.toLowerCase());
 
         model.addAttribute("users", usersPage.getContent());
         model.addAttribute("page", usersPage);

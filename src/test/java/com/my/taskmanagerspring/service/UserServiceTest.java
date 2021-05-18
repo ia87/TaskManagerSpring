@@ -1,5 +1,6 @@
 package com.my.taskmanagerspring.service;
 
+import com.my.taskmanagerspring.dao.UserDAO;
 import com.my.taskmanagerspring.dto.UserRegistrationDTO;
 import com.my.taskmanagerspring.entity.User;
 import com.my.taskmanagerspring.exceptions.UserAlreadyExistException;
@@ -21,13 +22,14 @@ class UserServiceTest {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     private UserService userService;
+    private UserDAO userDAO;
 
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         passwordEncoder = Mockito.mock(PasswordEncoder.class);
-        userService = new UserService(userRepository, passwordEncoder);
+        userService = new UserService(userRepository, passwordEncoder, userDAO);
     }
 
     @Test
