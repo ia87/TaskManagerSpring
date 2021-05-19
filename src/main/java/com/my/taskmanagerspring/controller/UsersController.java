@@ -30,16 +30,15 @@ public class UsersController {
         this.todoService = todoService;
     }
 
-    @RequestMapping("/users")
-    public String index(Model model,
+    @GetMapping("/users")
+    public String getUsers(Model model,
                         @RequestParam("page") Optional<Integer> page,
-                        @RequestParam("size") Optional<Integer> size,
-                        @RequestHeader(value = "jdbc", defaultValue = "") String repository) {
+                        @RequestParam("size") Optional<Integer> size) {
 
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(5);
         Page<User> usersPage =
-                userService.getAllUsers(PageRequest.of(currentPage - 1, pageSize), repository.toLowerCase());
+                userService.getAllUsers(PageRequest.of(currentPage - 1, pageSize));
 
         model.addAttribute("users", usersPage.getContent());
         model.addAttribute("page", usersPage);
@@ -47,7 +46,7 @@ public class UsersController {
         return "users";
     }
 
-    @RequestMapping(value = "/users/{id}/edit", method = RequestMethod.GET)
+    @GetMapping("/users/{id}/edit")
     public String showEditPage(@PathVariable(name = "id") Long id,
                                Model model) {
         User user = userService.getUserById(id);
@@ -56,7 +55,7 @@ public class UsersController {
     }
 
 
-    @RequestMapping(value = "/users/{id}/todo-list", method = RequestMethod.GET)
+    @GetMapping("/users/{id}/todo-list")
     public String showTodosForUser(@PathVariable("id") Long userId,
                                    ModelMap model,
                                    @RequestParam("page") Optional<Integer> page,
@@ -75,7 +74,7 @@ public class UsersController {
         return "users/list-todos";
     }
 
-    @RequestMapping(value = "/users/{id}/add-todo", method = RequestMethod.GET)
+    @GetMapping("/users/{id}/add-todo")
     public String showAddTodoPage(ModelMap model,
                                   @PathVariable("id") Long userId) {
         model.addAttribute("userId", userId);
@@ -83,7 +82,7 @@ public class UsersController {
         return "users/todo";
     }
 
-    @RequestMapping(value = "/users/{id}/add-todo", method = RequestMethod.POST)
+    @PostMapping("/users/{id}/add-todo")
     public String addTodo(@Valid Todo todo,
                           BindingResult result,
                           @PathVariable("id") Long userId) {
@@ -100,14 +99,14 @@ public class UsersController {
         return "redirect:/users/" + userId + "/todo-list";
     }
 
-    @RequestMapping(value = "/users/{id}/delete-todo", method = RequestMethod.GET)
+    @GetMapping("/users/{id}/delete-todo")
     public String deleteTodo(@RequestParam long id,
                              @PathVariable("id") Long userId) {
         todoService.deleteTodo(id);
         return "redirect:/users/" + userId + "/todo-list";
     }
 
-    @RequestMapping(value = "/users/{id}/update-todo", method = RequestMethod.GET)
+    @GetMapping("/users/{id}/update-todo")
     public String showUpdateTodoPage(@RequestParam long id,
                                      ModelMap model,
                                      @PathVariable("id") Long userId) {
@@ -117,7 +116,7 @@ public class UsersController {
         return "users/update-todo";
     }
 
-    @RequestMapping(value = "/users/{id}/update-todo", method = RequestMethod.POST)
+    @PostMapping("/users/{id}/update-todo")
     public String updateTodo(@Valid Todo todo,
                              BindingResult result,
                              @AuthenticationPrincipal UserDetails userDetails) {

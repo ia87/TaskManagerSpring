@@ -1,6 +1,7 @@
 package com.my.taskmanagerspring.config;
 
 import com.my.taskmanagerspring.interceptor.RequestData;
+import com.my.taskmanagerspring.interceptor.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -39,7 +40,7 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
-        registry.addInterceptor(requestData());
+        registry.addInterceptor(getRequestInterceptor());
     }
 
     @Bean
@@ -55,5 +56,10 @@ public class MvcConfig implements WebMvcConfigurer {
     @RequestScope
     public RequestData requestData(){
         return new RequestData();
+    }
+
+    @Bean
+    public RequestInterceptor getRequestInterceptor(){
+        return new RequestInterceptor();
     }
 }

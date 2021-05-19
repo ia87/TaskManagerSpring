@@ -3,6 +3,8 @@ package com.my.taskmanagerspring.util;
 import com.my.taskmanagerspring.interceptor.RequestData;
 import com.my.taskmanagerspring.repository.UserGeneralRepository;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,8 @@ public class RepositorySwitcher {
     @Autowired
     private RequestData requestData;
 
+    Logger logger = LoggerFactory.getLogger(RepositorySwitcher.class);
+
     public RepositorySwitcher(@Qualifier("JPARepo") UserGeneralRepository JPARepo,
                               @Qualifier("JDBCRepo") UserGeneralRepository JDBCRepo) {
         this.JPARepo = JPARepo;
@@ -23,13 +27,15 @@ public class RepositorySwitcher {
 
 
     public UserGeneralRepository getRepository() {
-        System.out.println(requestData);
-        System.out.println(requestData.hashCode());
-//        String repo = "JPA";
+        logger.debug("getRepository method where invoked");
+        logger.debug("RequestData Bean Hashcode = " + requestData.hashCode() + " Data = " + requestData);
         UserGeneralRepository repo = JPARepo;
         while (requestData.getHeaderNames().hasMoreElements()) {
-            if (requestData.getHeaderNames().nextElement().equals("jdbc")) {
+            String element = requestData.getHeaderNames().nextElement();
+            if (element.equals("jdbc")) {
                 repo = JDBCRepo;
+                logger.debug("Found jdbc header");
+                break;
             }
         }
         return repo;
