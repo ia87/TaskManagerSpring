@@ -8,7 +8,6 @@ import com.my.taskmanagerspring.entity.RoleType;
 import com.my.taskmanagerspring.entity.User;
 import com.my.taskmanagerspring.exceptions.UserAlreadyExistException;
 import com.my.taskmanagerspring.repository.UserGeneralRepository;
-import com.my.taskmanagerspring.util.RepositorySwitcher;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +27,9 @@ import java.util.*;
 @Service
 public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
-
     @Autowired
-    private RepositorySwitcher repositorySwitcher;
+    private UserGeneralRepository userGeneralRepository;
+
 
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
@@ -39,34 +38,34 @@ public class UserService implements UserDetailsService {
     }
 
     public UsersDTO getAllUsers() {
-        return new UsersDTO(repositorySwitcher.getRepository().findAll());
+        return new UsersDTO(userGeneralRepository.findAll());
     }
 
     public Page<User> getAllUsers(Pageable pageable) {
         logger.debug("getAllUsers(Pageable pageable) method where invoked");
-        return repositorySwitcher.getRepository().findAll(pageable);
+        return userGeneralRepository.findAll(pageable);
     }
 
     public Page<User> getAllUsers(Pageable pageable, String repository) {
         logger.debug("getAllUsers(Pageable pageable, String repository) method where invoked");
 
-        return repositorySwitcher.getRepository().findAll(pageable);
+        return userGeneralRepository.findAll(pageable);
     }
 
     public User getUserById(Long id) {
         logger.debug("getUserById method invocation");
-        return repositorySwitcher.getRepository().findById(id).orElseThrow(() -> new UsernameNotFoundException("User id = " + id));
+        return userGeneralRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User id = " + id));
     }
 
     public User getUserByEmail(String email) {
         logger.debug("getUserByEmail method invocation");
-        return repositorySwitcher.getRepository().findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User email = " + email));
+        return userGeneralRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User email = " + email));
     }
 
 
     public User saveNewUser(UserRegistrationDTO userRegistrationDTO) throws UserAlreadyExistException {
         logger.debug("saveNewUser method invocation");
-        UserGeneralRepository repository = repositorySwitcher.getRepository();
+        UserGeneralRepository repository = userGeneralRepository;
         if (emailExist(userRegistrationDTO.getEmail(), repository)) {
             log.info("{}", "Почтовый адрес уже существует");
             throw new UserAlreadyExistException(
@@ -82,13 +81,13 @@ public class UserService implements UserDetailsService {
                 .password(passwordEncoder.encode(userRegistrationDTO.getPassword()))
                 .build();
 
-        return repositorySwitcher.getRepository().save(user);
+        return userGeneralRepository.save(user);
 
     }
 
     public boolean deleteUser(Long userId) {
         logger.debug("deleteUser method invocation");
-        UserGeneralRepository repository = repositorySwitcher.getRepository();
+        UserGeneralRepository repository = userGeneralRepository;
         if (repository.findById(userId).isPresent()) {
             repository.deleteById(userId);
             return true;
@@ -106,7 +105,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.debug("loadUserByUsername method invocation");
 
-        User user = repositorySwitcher.getRepository()
+        User user = userGeneralRepository
                 .findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username = " + username));
 
@@ -123,11 +122,11 @@ public class UserService implements UserDetailsService {
 
     public Optional<User> findByUserLogin(UserDTO userDTO) {
         logger.debug("findByUserLogin(UserDTO userDTO) method invocation");
-        return repositorySwitcher.getRepository().findByEmail(userDTO.getEmail());
+        return userGeneralRepository.findByEmail(userDTO.getEmail());
     }
 
     public Optional<User> findByUserLogin(UserRegistrationDTO userDTO) {
         logger.debug("findByUserLogin(UserRegistrationDTO userDTO)  method invocation");
-        return repositorySwitcher.getRepository().findByEmail(userDTO.getEmail());
+        return userGeneralRepository.findByEmail(userDTO.getEmail());
     }
 }

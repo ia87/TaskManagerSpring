@@ -2,6 +2,7 @@ package com.my.taskmanagerspring.config;
 
 import com.my.taskmanagerspring.interceptor.RequestData;
 import com.my.taskmanagerspring.interceptor.RequestInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -21,6 +22,8 @@ public class MvcConfig implements WebMvcConfigurer {
     public static final String CLASSPATH_LANG_RES = "classpath:lang/res";
     public static final String UTF_8 = "UTF-8";
     public static final int CACHE_SECONDS = 3600;
+    @Autowired
+    private RequestInterceptor requestInterceptor;
 
     @Bean
     public LocaleResolver localeResolver() {
@@ -40,7 +43,7 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
-        registry.addInterceptor(getRequestInterceptor());
+        registry.addInterceptor(requestInterceptor);
     }
 
     @Bean
@@ -52,14 +55,5 @@ public class MvcConfig implements WebMvcConfigurer {
         return messageSource;
     }
 
-    @Bean
-    @RequestScope
-    public RequestData requestData(){
-        return new RequestData();
-    }
 
-    @Bean
-    public RequestInterceptor getRequestInterceptor(){
-        return new RequestInterceptor();
-    }
 }

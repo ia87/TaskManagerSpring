@@ -15,42 +15,42 @@ import java.util.Optional;
 @Qualifier("JPARepo")
 public class UserGeneralRepositoryJPA implements UserGeneralRepository {
     @Autowired
-    private final UserRepository userRepository;
+    private final JPAUserRepository JPAUserRepository;
 
     Logger logger = LoggerFactory.getLogger(UserGeneralRepositoryJPA.class);
 
-    public UserGeneralRepositoryJPA(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserGeneralRepositoryJPA(JPAUserRepository JPAUserRepository) {
+        this.JPAUserRepository = JPAUserRepository;
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+        return JPAUserRepository.findByEmail(email);
     }
 
     @Override
     public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+        return JPAUserRepository.findById(id);
     }
 
     @Override
     public List<User> findAll() {
-        return userRepository.findAll();
+        return JPAUserRepository.findAll();
     }
 
     @Override
     public Page<User> findAll(Pageable pageable) {
         logger.debug("findAll method invoked");
-        return userRepository.findAll(pageable);
+        return JPAUserRepository.findAll(pageable);
     }
 
     @Override
     public User save(User user) {
-        return userRepository.save(user);
+        return JPAUserRepository.save(user);
     }
 
     @Override
     public void deleteById(Long id) {
-        userRepository.deleteById(id);
+        JPAUserRepository.deleteById(id);
     }
 }

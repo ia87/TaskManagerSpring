@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface JPAUserRepository extends JpaRepository<User, Long> {
 //    @Query("SELECT u FROM User u WHERE u.email = ?1")
 
     @EntityGraph(attributePaths = {"roles"})

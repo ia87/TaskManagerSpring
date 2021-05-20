@@ -29,14 +29,12 @@ public class UserGeneralRepositoryJDBC implements UserGeneralRepository {
 
     private final String SQL_FIND_USER_BY_ID = "SELECT * FROM user WHERE id = ?";
     private final String SQL_FIND_USER_BY_EMAIL = "SELECT * FROM user WHERE email = ?";
-    private final String SQL_FIND_ALL_USERS = "select * from user limit ?,?";
+    private final String SQL_FIND_ALL_USERS = "select * from user";
     private final String SQL_COUNT_USERS = "SELECT count(*) FROM user";
 
     @Override
     public Page<User> findAll(Pageable pageable) {
         logger.debug("findAll method invoked");
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
         return new PageImpl<>(jdbcTemplate.query(SQL_FIND_ALL_USERS, userMapper), pageable, count());
     }
 
